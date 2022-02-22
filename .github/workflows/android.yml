@@ -7,19 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Super-Linter
-        uses: github/super-linter@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILTER_REGEX_EXCLUDE: gradlew*
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: set up JDK 11
@@ -28,6 +17,5 @@ jobs:
         java-version: '11'
         distribution: 'zulu'
         cache: gradle
-
     - name: ls
       run: ls -ltr
