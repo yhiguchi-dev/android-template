@@ -12,9 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Super-Linter
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
           FILTER_REGEX_EXCLUDE: gradlew*
           VALIDATE_KOTLIN: false
