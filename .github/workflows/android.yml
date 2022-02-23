@@ -17,5 +17,5 @@ jobs:
         java-version: '11'
         distribution: 'zulu'
         cache: gradle
-    - name: ls
-      run: ls -ltr
+    - name: lint
+      run: ./gradlew lint spotlessCheck
