@@ -17,5 +17,10 @@ jobs:
         java-version: '11'
         distribution: 'zulu'
         cache: gradle
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
     - name: lint
-      run: ./gradlew lint spotlessCheck
+      run: bundle exec fastlane lint

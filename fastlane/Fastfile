@@ -16,9 +16,24 @@
 default_platform(:android)
 
 platform :android do
+  desc "Runs lint"
+  lane :lint do
+    gradle(task: "lint spotlessCheck")
+  end
+
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
+  end
+
+  desc "My awesome app"
+  lane :distribute do
+#     build_android_app(...)
+    firebase_app_distribution(
+      app: "1:123456789:android:abcd1234",
+      testers: "tester1@company.com, tester2@company.com",
+      release_notes: "Lots of amazing new features to test out!"
+    )
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
