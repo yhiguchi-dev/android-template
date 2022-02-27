@@ -28,7 +28,7 @@ platform :android do
 
   desc "My awesome app"
   lane :distribute do
-#     build_android_app(...)
+    gradle(task: "clean bundleRelease")
     firebase_app_distribution(
       app: "1:123456789:android:abcd1234",
       testers: "tester1@company.com, tester2@company.com",
