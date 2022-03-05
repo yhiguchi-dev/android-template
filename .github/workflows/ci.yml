@@ -15,3 +15,5 @@ jobs:
       uses: ./.github/actions/setup
     - name: lint
       run: bundle exec fastlane lint
+    - name: test
+      run: bundle exec fastlane test

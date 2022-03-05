@@ -14,3 +14,7 @@ runs:
       with:
         ruby-version: '3.1'
         bundler-cache: true
+    - run: echo $LC_ALL
+      shell: bash
+    - run: echo $LANG
+      shell: bash

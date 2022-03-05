@@ -16,6 +16,11 @@
 default_platform(:android)
 
 platform :android do
+  desc "Runs format"
+  lane :format do
+    gradle(task: "spotlessApply")
+  end
+
   desc "Runs lint"
   lane :lint do
     gradle(task: "lint spotlessCheck")
