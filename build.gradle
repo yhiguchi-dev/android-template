@@ -14,3 +14,18 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+subprojects {
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.hasTask(testDebugUnitTest)) {
+            testReport.reportOn(testDebugUnitTest)
+        }
+    }
+}
+
+task testReport(type: TestReport) {
+    subprojects.each {
+        dependsOn("${it.name}:testDebugUnitTest")
+        destinationDir = file("$buildDir/reports/tests/${it.name}")
+    }
+}

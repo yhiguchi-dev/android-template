@@ -28,7 +28,7 @@ platform :android do
 
   desc "Runs all the tests"
   lane :test do
-    gradle(task: "test")
+    gradle(task: "clean test testReport")
   end
 
   desc "My awesome app"
