@@ -17,3 +17,7 @@ jobs:
       run: bundle exec fastlane lint
     - name: test
       run: bundle exec fastlane test
+    - uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: build/reports/tests/
