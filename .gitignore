@@ -57,3 +57,5 @@ lint/outputs/
 lint/tmp/
 *.hprof
 .idea/
+.envrc
+config/

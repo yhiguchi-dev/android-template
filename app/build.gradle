@@ -9,11 +9,11 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "dev.yhiguchi.template"
+        applicationId applicationId
         minSdk 24
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode getVersionCode(applicationVersion)
+        versionName applicationVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -22,6 +22,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            versionNameSuffix "-debug-" + buildDate
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -90,4 +93,12 @@ dokkaHtml.configure {
             noAndroidSdkLink.set(false)
         }
     }
+}
+
+static def getVersionCode(String version) {
+    def versions = version.split('\\.')
+    def major = versions[0].toInteger() * 1000 ** 2
+    def minor = versions[1].toInteger() * 1000
+    def patch = versions[2].toInteger()
+    return major + minor + patch
 }

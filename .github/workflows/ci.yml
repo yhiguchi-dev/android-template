@@ -9,10 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APPLICATION_ID: dev.yhiguchi.template
+      APPLICATION_VERSION: 0.0.1
+      BUILD_DATE: $(date "+%Y-%m-%d-%H-%M")
     steps:
     - uses: actions/checkout@v3
     - name: Setup Java and Ruby
       uses: ./.github/actions/setup
+    - name: Generate config
+      run: bundle exec fastlane config
     - name: lint
       run: bundle exec fastlane lint
     - name: test
