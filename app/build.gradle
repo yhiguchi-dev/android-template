@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId applicationId
+        applicationId "dev.yhiguchi.template"
         minSdk 24
         targetSdk 31
         versionCode getVersionCode(applicationVersion)
