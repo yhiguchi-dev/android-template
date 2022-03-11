@@ -58,4 +58,4 @@ lint/tmp/
 *.hprof
 .idea/
 .envrc
-config/
+env.gradle
