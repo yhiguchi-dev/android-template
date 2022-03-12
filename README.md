@@ -1,6 +1,4 @@
-# chat-app-android
-
-[![Android CI](https://github.com/yhiguchi-dev/chat-app-android/actions/workflows/android.yml/badge.svg)](https://github.com/yhiguchi-dev/chat-app-android/actions/workflows/android.yml)
+# android-template
 
 ## setup
 

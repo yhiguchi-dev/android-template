@@ -7,13 +7,16 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    apply from: '../env.gradle'
 
+    def applicationVersionCode = getVersionCode(applicationVersion)
+
+    compileSdk 31
     defaultConfig {
         applicationId applicationId
         minSdk 24
         targetSdk 31
-        versionCode getVersionCode(applicationVersion)
+        versionCode applicationVersionCode
         versionName applicationVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,16 +25,32 @@ android {
         }
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+        release {
+            storeFile file("$keystoreFile")
+            storePassword keystorePassword
+            keyAlias keyAlias
+            keyPassword keyPassword
+        }
+    }
+
     buildTypes {
         debug {
+            debuggable true
+            signingConfig signingConfigs.debug
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug-$buildDate"
         }
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -108,5 +127,5 @@ static def getVersionCode(String version) {
     def major = versions[0].toInteger() * 1000 ** 2
     def minor = versions[1].toInteger() * 1000
     def patch = versions[2].toInteger()
-    return major + minor + patch
+    major + minor + patch
 }
