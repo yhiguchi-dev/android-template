@@ -16,6 +16,13 @@
 default_platform(:android)
 
 platform :android do
+  desc "Runs generate debug.keystore"
+  lane :generate_debug_keystore do
+    Dir.chdir("../scripts") do
+      sh("./generate-keystore.sh")
+    end
+  end
+
   desc "Runs generate env"
   lane :generate_env do
     Dir.chdir("../") do
