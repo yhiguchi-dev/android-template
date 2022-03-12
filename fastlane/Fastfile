@@ -38,6 +38,16 @@ platform :android do
     gradle(task: "clean test testReport")
   end
 
+  desc "Runs build debug"
+  lane :build_debug do
+    gradle(task: "clean bundleDebug")
+  end
+
+  desc "Runs build release"
+  lane :build_release do
+    gradle(task: "clean bundleRelease")
+  end
+
   desc "My awesome app"
   lane :distribute do
     gradle(task: "clean bundleRelease")
