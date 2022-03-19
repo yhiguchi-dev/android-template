@@ -88,6 +88,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     implementation 'androidx.activity:activity-compose:1.4.0'
 
+    implementation 'com.google.android.gms:play-services-cronet:18.0.1'
+
     implementation platform('com.google.firebase:firebase-bom:29.2.0')
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
@@ -99,6 +101,8 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
+    testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.6.10'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
     testImplementation 'io.kotest:kotest-runner-junit5:5.2.1'
     testImplementation 'io.kotest:kotest-framework-concurrency:5.2.1'
     testImplementation 'io.kotest.extensions:kotest-extensions-wiremock:1.0.3'
