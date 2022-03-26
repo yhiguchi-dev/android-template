@@ -2,26 +2,26 @@
 
 set -eux
 
-cd $(dirname $0)/../
+cd "$(dirname "$0")"/../
 
 debug=${DEBUG:=false}
 
 if "${debug}"; then
-  keystore=debug.keystore
-  validity=10950
-  storepass=android
-  alias=androiddebugkey
-  dname='CN=Android Debug, O=Android, C=US'
+  keystoreFile=debug.keystore
+  keystorePassword=android
+  keyValidity=10950
+  keyAlias=androiddebugkey
+  distinguishedName='CN=Android Debug, O=Android, C=US'
   outputDir=./app
 else
-  keystore=${KEYSTORE_FILE}
-  validity=${VALIDITY}
-  storepass=${KEYSTORE_PASSWORD}
-  alias=${KEY_ALIAS}
-  dname=${DISTINGUISHED_NAME}
-  outputDir=${KEYSTORE_OUTPUT_DIR}
+  keystoreFile=${KEYSTORE_FILE}
+  keystorePassword=${KEYSTORE_PASSWORD}
+  keyValidity=${KEY_VALIDITY}
+  keyAlias=${KEY_ALIAS}
+  distinguishedName=${DISTINGUISHED_NAME}
+  outputDir=${OUTPUT_DIR}
 fi
 
-keytool -J-Dkeystore.pkcs12.legacy -genkey -v -keystore ${outputDir}/${keystore} -keyalg RSA -validity ${validity} -storepass ${storepass} -alias ${alias} -dname "${dname}"
+keytool -J-Dkeystore.pkcs12.legacy -genkey -v -keystore "${outputDir}"/"${keystoreFile}" -keyalg RSA -validity "${keyValidity}" -storepass "${keystorePassword}" -alias "${keyAlias}" -dname "${distinguishedName}"
 
-keytool -list -v -keystore ${outputDir}/${keystore} -storepass ${storepass}
+keytool -list -v -keystore "${outputDir}"/"${keystoreFile}" -storepass "${keystorePassword}"
