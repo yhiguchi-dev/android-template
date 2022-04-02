@@ -20,3 +20,4 @@ jobs:
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: gradlew*
           VALIDATE_KOTLIN: false
+          VALIDATE_KOTLIN_ANDROID: false
