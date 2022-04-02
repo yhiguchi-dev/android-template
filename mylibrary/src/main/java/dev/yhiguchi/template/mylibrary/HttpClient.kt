@@ -64,9 +64,7 @@ object HttpClient {
         }
         HttpResponse.ServerError(code, message)
       }
-      else -> {
-        error("unknown http status code : $code")
-      }
+      else -> error("unknown http status code : $code")
     }
 }
 
