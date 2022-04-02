@@ -114,7 +114,7 @@ dependencies {
 spotless {
     kotlin {
         target 'src/**/*.kt'
-        ktlint().userData([indent_size:'2'])
+        ktlint().userData([android:'true', indent_size:'2'])
     }
 }
 
