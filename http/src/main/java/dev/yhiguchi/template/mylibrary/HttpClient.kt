@@ -1,7 +1,6 @@
 package dev.yhiguchi.template.mylibrary
 
 import java.net.HttpURLConnection
-import java.net.URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -10,7 +9,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 
-object HttpClient {
+class HttpClient(private val httpConnector: HttpConnector) {
+
   @OptIn(ExperimentalSerializationApi::class)
   suspend inline fun <reified R> get(url: String): HttpResponse<R> = withContext(
     Dispatchers.IO
@@ -29,7 +29,7 @@ object HttpClient {
     }
 
   fun httpURLConnection(url: String, httpMethod: HttpMethod) =
-    (URL(url).openConnection() as HttpURLConnection).also {
+    httpConnector.connect(url).also {
       it.connectTimeout = 3000
       it.readTimeout = 3000
       it.requestMethod = httpMethod.name
@@ -82,3 +82,7 @@ enum class HttpMethod {
 }
 
 object EmptyResponse
+
+interface HttpConnector {
+  fun connect(url: String): HttpURLConnection
+}
