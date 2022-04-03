@@ -1,6 +1,7 @@
 package dev.yhiguchi.template.mylibrary
 
 import java.net.HttpURLConnection
+import java.net.URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -9,7 +10,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 
-class HttpClient(private val httpConnector: HttpConnector) {
+object HttpClient {
 
   @OptIn(ExperimentalSerializationApi::class)
   suspend inline fun <reified R> get(url: String): HttpResponse<R> = withContext(
@@ -29,7 +30,7 @@ class HttpClient(private val httpConnector: HttpConnector) {
     }
 
   fun httpURLConnection(url: String, httpMethod: HttpMethod) =
-    httpConnector.connect(url).also {
+    (URL(url).openConnection() as HttpURLConnection).also {
       it.connectTimeout = 3000
       it.readTimeout = 3000
       it.requestMethod = httpMethod.name
@@ -49,7 +50,9 @@ class HttpClient(private val httpConnector: HttpConnector) {
       in 200..299 -> {
         when (R::class) {
           EmptyResponse::class -> HttpResponse.NoContent(code)
-          else -> HttpResponse.Success(code, Json.decodeFromStream(httpURLConnection.inputStream))
+          else -> {
+            HttpResponse.Success(code, Json.decodeFromStream(httpURLConnection.inputStream))
+          }
         }
       }
       in 400..499 -> {
@@ -70,7 +73,7 @@ class HttpClient(private val httpConnector: HttpConnector) {
 
 sealed class HttpResponse<out T> {
   @Serializable
-  data class Success<T>(val code: Int, val requestBody: T) : HttpResponse<T>()
+  data class Success<T>(val code: Int, val responseBody: T) : HttpResponse<T>()
   data class NoContent(val code: Int) : HttpResponse<Nothing>()
   data class ClientError(val code: Int, val message: String) : HttpResponse<Nothing>()
   data class ServerError(val code: Int, val message: String) : HttpResponse<Nothing>()
@@ -82,7 +85,3 @@ enum class HttpMethod {
 }
 
 object EmptyResponse
-
-interface HttpConnector {
-  fun connect(url: String): HttpURLConnection
-}
