@@ -12,10 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.yhiguchi.template.ui.theme.TemplateTheme
+import java.net.URL
+import org.chromium.net.CronetEngine
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    val engine = CronetEngine.Builder(this)
+      .enableHttp2(true)
+      .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_IN_MEMORY, 100 * 1024)
+      .enableQuic(true)
+      .build() ?: error("error")
+    URL.setURLStreamHandlerFactory(engine.createURLStreamHandlerFactory())
     setContent {
       TemplateTheme {
         // A surface container using the 'background' color from the theme
