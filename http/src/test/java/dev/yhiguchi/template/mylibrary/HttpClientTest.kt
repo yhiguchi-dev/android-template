@@ -7,6 +7,8 @@ import io.kotest.extensions.wiremock.ListenerMode
 import io.kotest.extensions.wiremock.WireMockListener
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlinx.serialization.Serializable
 
 class HttpClientTest : StringSpec({
@@ -17,10 +19,16 @@ class HttpClientTest : StringSpec({
 
   afterTest { wireMockServer.resetAll() }
 
+  val httpConnector = object : HttpConnector {
+    override fun connect(url: String): HttpURLConnection =
+      (URL(url).openConnection() as HttpURLConnection)
+  }
+  val httpClient = HttpClient(httpConnector)
+
   "get method with success" {
     wireMockServer.stubGetWithOk()
 
-    val response = HttpClient.get<Response>(url)
+    val response = httpClient.get<Response>(url)
     response.shouldBeInstanceOf<HttpResponse.Success<Response>>()
     response.code shouldBe 200
     response.requestBody.customer shouldBe "123"
@@ -29,7 +37,7 @@ class HttpClientTest : StringSpec({
   "get method with bad request" {
     wireMockServer.stubGetWithBadRequest()
 
-    val response = HttpClient.get<Response>(url)
+    val response = httpClient.get<Response>(url)
     response.shouldBeInstanceOf<HttpResponse.ClientError>()
     response.code shouldBe 400
     response.message shouldBe ""
@@ -38,7 +46,7 @@ class HttpClientTest : StringSpec({
   "post method with success" {
     wireMockServer.stubPostWithOk()
 
-    val response = HttpClient.post<Request, Response>(url, Request("test"))
+    val response = httpClient.post<Request, Response>(url, Request("test"))
     response.shouldBeInstanceOf<HttpResponse.Success<Response>>()
     response.code shouldBe 200
     response.requestBody.customer shouldBe "1234"
@@ -47,7 +55,7 @@ class HttpClientTest : StringSpec({
   "post method with no content" {
     wireMockServer.stubPostWithNoContent()
 
-    val response = HttpClient.post<Request, EmptyResponse>(url, Request("test"))
+    val response = httpClient.post<Request, EmptyResponse>(url, Request("test"))
     response.shouldBeInstanceOf<HttpResponse.NoContent>()
     response.code shouldBe 200
   }
@@ -55,7 +63,7 @@ class HttpClientTest : StringSpec({
   "post method with bad request" {
     wireMockServer.stubPostWithBadRequest()
 
-    val response = HttpClient.post<Request, EmptyResponse>(url, Request("test"))
+    val response = httpClient.post<Request, EmptyResponse>(url, Request("test"))
     response.shouldBeInstanceOf<HttpResponse.ClientError>()
     response.code shouldBe 400
     response.message shouldBe """{
