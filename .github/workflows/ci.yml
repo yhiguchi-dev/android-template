@@ -26,6 +26,7 @@ jobs:
     - name: test
       run: bundle exec fastlane test
     - uses: actions/upload-artifact@v3
+      if: failure()
       with:
         name: test-reports
         path: build/reports/tests/
