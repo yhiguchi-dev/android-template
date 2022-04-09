@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 object Logger {
-  private val logger = when (BuildType.of()) {
+  private val logger = when (BuildType.of(BuildConfig.BUILD_TYPE)) {
     BuildType.DEBUG -> {
       AndroidLogger()
     }
@@ -23,7 +23,7 @@ enum class BuildType {
   RELEASE;
 
   companion object {
-    fun of() = valueOf(BuildConfig.BUILD_TYPE.uppercase())
+    fun of(type: String) = valueOf(type.uppercase())
   }
 }
 
