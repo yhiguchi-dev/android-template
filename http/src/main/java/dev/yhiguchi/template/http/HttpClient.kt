@@ -1,4 +1,4 @@
-package dev.yhiguchi.template.mylibrary
+package dev.yhiguchi.template.http
 
 import java.net.HttpURLConnection
 import java.net.URL

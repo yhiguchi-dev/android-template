@@ -1,4 +1,4 @@
-package dev.yhiguchi.template.mylibrary
+package dev.yhiguchi.template.http
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
