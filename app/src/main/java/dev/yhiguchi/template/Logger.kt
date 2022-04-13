@@ -3,7 +3,7 @@ package dev.yhiguchi.template
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
-object Logger {
+object MyLogger {
   private val logger = when (BuildType.of(BuildConfig.BUILD_TYPE)) {
     BuildType.DEBUG -> {
       AndroidLogger()
