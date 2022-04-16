@@ -25,8 +25,8 @@ jobs:
       run: bundle exec fastlane lint
     - name: test
       run: bundle exec fastlane test
-    - uses: actions/upload-artifact@v3
-      if: failure()
-      with:
-        name: test-reports
-        path: build/reports/tests/
+#    - uses: actions/upload-artifact@v3
+#      if: failure()
+#      with:
+#        name: test-reports
+#        path: build/reports/tests/

@@ -49,7 +49,7 @@ platform :android do
 
   desc "Runs all the tests"
   lane :test do
-    gradle(task: "clean test testReport")
+    gradle(task: "clean test")
   end
 
   desc "Runs build debug"
