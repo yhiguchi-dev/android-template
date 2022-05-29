@@ -70,7 +70,7 @@ dependencies {
 spotless {
     kotlin {
         target 'src/**/*.kt'
-        ktlint().userData([android:'true', indent_size:'2'])
+        ktlint('0.43.2').userData([android:'true', indent_size:'2'])
     }
 }
 
