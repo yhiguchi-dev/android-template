@@ -20,8 +20,8 @@ class HttpClientTest : StringSpec({
   "get method with success" {
     wireMockServer.stubGetWithOk()
 
-    val response = HttpClient.get<Response>(url)
-    response.shouldBeInstanceOf<HttpResponse.Success<Response>>()
+    val response = HttpClient.get<TestResponse>(url)
+    response.shouldBeInstanceOf<Response.Success<TestResponse>>()
     response.code shouldBe 200
     response.responseBody.customer shouldBe "123"
   }
@@ -29,8 +29,8 @@ class HttpClientTest : StringSpec({
   "get method with bad request" {
     wireMockServer.stubGetWithBadRequest()
 
-    val response = HttpClient.get<Response>(url)
-    response.shouldBeInstanceOf<HttpResponse.ClientError>()
+    val response = HttpClient.get<TestResponse>(url)
+    response.shouldBeInstanceOf<Response.ClientError>()
     response.code shouldBe 400
     response.message shouldBe ""
   }
@@ -38,8 +38,8 @@ class HttpClientTest : StringSpec({
   "post method with success" {
     wireMockServer.stubPostWithOk()
 
-    val response = HttpClient.post<Request, Response>(url, Request("test"))
-    response.shouldBeInstanceOf<HttpResponse.Success<Response>>()
+    val response = HttpClient.post<TestRequest, TestResponse>(url, TestRequest("test"))
+    response.shouldBeInstanceOf<Response.Success<TestResponse>>()
     response.code shouldBe 200
     response.responseBody.customer shouldBe "1234"
   }
@@ -47,16 +47,16 @@ class HttpClientTest : StringSpec({
   "post method with no content" {
     wireMockServer.stubPostWithNoContent()
 
-    val response = HttpClient.post<Request, EmptyResponse>(url, Request("test"))
-    response.shouldBeInstanceOf<HttpResponse.NoContent>()
+    val response = HttpClient.postNoBody(url, TestRequest("test"))
+    response.shouldBeInstanceOf<Response.Success<Unit>>()
     response.code shouldBe 200
   }
 
   "post method with bad request" {
     wireMockServer.stubPostWithBadRequest()
 
-    val response = HttpClient.post<Request, EmptyResponse>(url, Request("test"))
-    response.shouldBeInstanceOf<HttpResponse.ClientError>()
+    val response = HttpClient.postNoBody(url, TestRequest("test"))
+    response.shouldBeInstanceOf<Response.ClientError>()
     response.code shouldBe 400
     response.message shouldBe """{
   "error": "invalid"
@@ -65,10 +65,10 @@ class HttpClientTest : StringSpec({
 })
 
 @Serializable
-data class Request(val value: String)
+data class TestRequest(val value: String)
 
 @Serializable
-data class Response(val customer: String)
+data class TestResponse(val customer: String)
 
 fun WireMockServer.stubGetWithOk() {
   this.stubFor(

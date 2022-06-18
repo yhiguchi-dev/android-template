@@ -12,76 +12,77 @@ import kotlinx.serialization.json.encodeToStream
 
 object HttpClient {
 
-  @OptIn(ExperimentalSerializationApi::class)
-  suspend inline fun <reified R> get(url: String): HttpResponse<R> = withContext(
+  suspend inline fun <reified R> get(url: String): Response<R> = withContext(
     Dispatchers.IO
   ) {
-    val httpURLConnection = httpURLConnection(url, HttpMethod.GET)
+    val httpURLConnection = create(url, Method.GET)
     resolve(httpURLConnection)
   }
 
-  @OptIn(ExperimentalSerializationApi::class)
-  suspend inline fun <reified T, reified R> post(url: String, requestBody: T): HttpResponse<R> =
+  suspend inline fun <reified T, reified R> post(url: String, requestBody: T): Response<R> =
     withContext(
       Dispatchers.IO
     ) {
-      val httpURLConnection = httpURLConnection(url, HttpMethod.POST, requestBody)
+      val httpURLConnection = create(url, Method.POST, requestBody)
       resolve(httpURLConnection)
     }
 
-  fun httpURLConnection(url: String, httpMethod: HttpMethod) =
+  suspend inline fun <reified T> postNoBody(url: String, requestBody: T): Response<Unit> =
+    withContext(
+      Dispatchers.IO
+    ) {
+      val httpURLConnection = create(url, Method.POST, requestBody)
+      resolveNoBody(httpURLConnection)
+    }
+
+  fun create(url: String, method: Method) =
     (URL(url).openConnection() as HttpURLConnection).also {
       it.connectTimeout = 3000
       it.readTimeout = 3000
-      it.requestMethod = httpMethod.name
+      it.requestMethod = method.name
       it.setRequestProperty("content-type", "application/json")
     }
 
   @OptIn(ExperimentalSerializationApi::class)
-  inline fun <reified T> httpURLConnection(url: String, httpMethod: HttpMethod, requestBody: T) =
-    httpURLConnection(url, httpMethod).also {
+  inline fun <reified T> create(url: String, method: Method, requestBody: T) =
+    create(url, method).also {
       it.doOutput = true
       Json.encodeToStream(requestBody, it.outputStream)
     }
 
   @OptIn(ExperimentalSerializationApi::class)
-  inline fun <reified R> resolve(httpURLConnection: HttpURLConnection): HttpResponse<R> =
+  inline fun <reified R> resolve(httpURLConnection: HttpURLConnection): Response<R> =
     when (val code = httpURLConnection.responseCode) {
-      in 200..299 -> {
-        when (R::class) {
-          EmptyResponse::class -> HttpResponse.NoContent(code)
-          else -> {
-            HttpResponse.Success(code, Json.decodeFromStream(httpURLConnection.inputStream))
-          }
-        }
-      }
-      in 400..499 -> {
-        val message = httpURLConnection.errorStream.bufferedReader().use {
-          it.readText()
-        }
-        HttpResponse.ClientError(code, message)
-      }
-      in 500..599 -> {
-        val message = httpURLConnection.errorStream.bufferedReader().use {
-          it.readText()
-        }
-        HttpResponse.ServerError(code, message)
-      }
+      in 200..299 -> Response.Success(code, Json.decodeFromStream(httpURLConnection.inputStream))
+      else -> resolveError(httpURLConnection)
+    }
+
+  fun resolveNoBody(httpURLConnection: HttpURLConnection): Response<Unit> =
+    when (val code = httpURLConnection.responseCode) {
+      in 200..299 -> Response.Success(code, Unit)
+      else -> resolveError(httpURLConnection)
+    }
+
+  fun <R> resolveError(httpURLConnection: HttpURLConnection): Response<R> {
+    val message = httpURLConnection.errorStream.bufferedReader().use {
+      it.readText()
+    }
+    return when (val code = httpURLConnection.responseCode) {
+      in 400..499 -> Response.ClientError(code, message)
+      in 500..599 -> Response.ServerError(code, message)
       else -> error("unknown http status code : $code")
     }
+  }
 }
 
-sealed class HttpResponse<out T> {
+sealed class Response<out T> {
   @Serializable
-  data class Success<T>(val code: Int, val responseBody: T) : HttpResponse<T>()
-  data class NoContent(val code: Int) : HttpResponse<Nothing>()
-  data class ClientError(val code: Int, val message: String) : HttpResponse<Nothing>()
-  data class ServerError(val code: Int, val message: String) : HttpResponse<Nothing>()
+  data class Success<T>(val code: Int, val responseBody: T) : Response<T>()
+  data class ClientError(val code: Int, val message: String) : Response<Nothing>()
+  data class ServerError(val code: Int, val message: String) : Response<Nothing>()
 }
 
-enum class HttpMethod {
+enum class Method {
   GET,
   POST
 }
-
-object EmptyResponse
