@@ -15,26 +15,40 @@ object HttpClient {
   suspend inline fun <reified R> get(url: String): Response<R> = withContext(
     Dispatchers.IO
   ) {
-    val httpURLConnection = create(url, Method.GET)
-    resolve(httpURLConnection)
+    val httpURLConnection = HttpURLConnectionCreator.create(url, Method.GET)
+    ResponseResolver.resolve(httpURLConnection)
   }
 
   suspend inline fun <reified T, reified R> post(url: String, requestBody: T): Response<R> =
     withContext(
       Dispatchers.IO
     ) {
-      val httpURLConnection = create(url, Method.POST, requestBody)
-      resolve(httpURLConnection)
+      val httpURLConnection = HttpURLConnectionCreator.create(url, Method.POST, requestBody)
+      ResponseResolver.resolve(httpURLConnection)
     }
 
   suspend inline fun <reified T> postNoBody(url: String, requestBody: T): Response<Unit> =
     withContext(
       Dispatchers.IO
     ) {
-      val httpURLConnection = create(url, Method.POST, requestBody)
-      resolveNoBody(httpURLConnection)
+      val httpURLConnection = HttpURLConnectionCreator.create(url, Method.POST, requestBody)
+      ResponseResolver.resolveNoBody(httpURLConnection)
     }
+}
 
+sealed class Response<out T> {
+  @Serializable
+  data class Success<T>(val code: Int, val responseBody: T) : Response<T>()
+  data class ClientError(val code: Int, val message: String) : Response<Nothing>()
+  data class ServerError(val code: Int, val message: String) : Response<Nothing>()
+}
+
+enum class Method {
+  GET,
+  POST
+}
+
+object HttpURLConnectionCreator {
   fun create(url: String, method: Method) =
     (URL(url).openConnection() as HttpURLConnection).also {
       it.connectTimeout = 3000
@@ -49,7 +63,9 @@ object HttpClient {
       it.doOutput = true
       Json.encodeToStream(requestBody, it.outputStream)
     }
+}
 
+object ResponseResolver {
   @OptIn(ExperimentalSerializationApi::class)
   inline fun <reified R> resolve(httpURLConnection: HttpURLConnection): Response<R> =
     when (val code = httpURLConnection.responseCode) {
@@ -73,16 +89,4 @@ object HttpClient {
       else -> error("unknown http status code : $code")
     }
   }
-}
-
-sealed class Response<out T> {
-  @Serializable
-  data class Success<T>(val code: Int, val responseBody: T) : Response<T>()
-  data class ClientError(val code: Int, val message: String) : Response<Nothing>()
-  data class ServerError(val code: Int, val message: String) : Response<Nothing>()
-}
-
-enum class Method {
-  GET,
-  POST
 }
