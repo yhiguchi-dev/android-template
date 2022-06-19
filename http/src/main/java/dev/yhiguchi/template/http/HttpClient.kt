@@ -1,5 +1,6 @@
 package dev.yhiguchi.template.http
 
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.Dispatchers
@@ -70,20 +71,20 @@ object ResponseResolver {
   inline fun <reified R> resolve(httpURLConnection: HttpURLConnection): Response<R> =
     when (val code = httpURLConnection.responseCode) {
       in 200..299 -> Response.Success(code, Json.decodeFromStream(httpURLConnection.inputStream))
-      else -> resolveError(httpURLConnection)
+      else -> resolveError(httpURLConnection.errorStream, code)
     }
 
   fun resolveNoBody(httpURLConnection: HttpURLConnection): Response<Unit> =
     when (val code = httpURLConnection.responseCode) {
       in 200..299 -> Response.Success(code, Unit)
-      else -> resolveError(httpURLConnection)
+      else -> resolveError(httpURLConnection.errorStream, code)
     }
 
-  fun <R> resolveError(httpURLConnection: HttpURLConnection): Response<R> {
-    val message = httpURLConnection.errorStream.bufferedReader().use {
+  fun <R> resolveError(inputStream: InputStream, code: Int): Response<R> {
+    val message = inputStream.bufferedReader().use {
       it.readText()
     }
-    return when (val code = httpURLConnection.responseCode) {
+    return when (code) {
       in 400..499 -> Response.ClientError(code, message)
       in 500..599 -> Response.ServerError(code, message)
       else -> error("unknown http status code : $code")
