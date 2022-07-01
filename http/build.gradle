@@ -70,7 +70,9 @@ dependencies {
 spotless {
     kotlin {
         target 'src/**/*.kt'
-        ktlint('0.43.2').userData([android:'true', indent_size:'2'])
+        ktlint()
+                .userData(["android": "true"])
+                .editorConfigOverride(["indent_size": 2])
     }
 }
 
