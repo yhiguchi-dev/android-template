@@ -11,9 +11,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.yhiguchi.template.ui.theme.TemplateTheme
-import java.net.URL
+import dev.yhiguchi.template.ui.theme.Theme
 import org.chromium.net.CronetEngine
+import java.net.URL
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
       .build() ?: error("error")
     URL.setURLStreamHandlerFactory(engine.createURLStreamHandlerFactory())
     setContent {
-      TemplateTheme {
+      Theme {
         // A surface container using the 'background' color from the theme
         Surface(
           modifier = Modifier.fillMaxSize(),
@@ -54,7 +54,7 @@ fun Greeting(name: String) {
 )
 @Composable
 fun DefaultPreview() {
-  TemplateTheme {
+  Theme {
     Greeting("Android")
   }
 }
