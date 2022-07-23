@@ -1,8 +1,5 @@
 package dev.yhiguchi.template.http
 
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -10,6 +7,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 object HttpClient {
 
