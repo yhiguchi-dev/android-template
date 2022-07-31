@@ -1,7 +1,4 @@
 buildscript {
-  extra.apply {
-    set("compose_version", "1.2.0")
-  }
   dependencies {
     classpath("com.google.gms:google-services:4.3.13")
     classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.1")
