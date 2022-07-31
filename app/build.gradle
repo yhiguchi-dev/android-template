@@ -12,11 +12,11 @@ android {
 
     def applicationVersionCode = getVersionCode(applicationVersion)
 
-    compileSdk 31
+    compileSdk 32
     defaultConfig {
         applicationId applicationId
         minSdk 24
-        targetSdk 31
+        targetSdk 32
         versionCode applicationVersionCode
         versionName applicationVersion
 
