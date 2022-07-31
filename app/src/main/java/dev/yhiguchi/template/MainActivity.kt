@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.yhiguchi.template.ui.theme.Theme
-import org.chromium.net.CronetEngine
 import java.net.URL
+import org.chromium.net.CronetEngine
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {

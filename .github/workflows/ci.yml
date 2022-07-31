@@ -21,8 +21,6 @@ jobs:
       run: |
         echo "APPLICATION_VERSION=0.1.0" >> "${GITHUB_ENV}"
         echo "BUILD_DATE=$(date "+%Y-%m-%d-%H-%M")" >> "${GITHUB_ENV}"
-    - name: Generate env
-      run: bundle exec fastlane generate_env
     - name: lint
       run: bundle exec fastlane lint
     - name: test

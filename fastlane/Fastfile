@@ -30,13 +30,6 @@ platform :android do
     end
   end
 
-  desc "Runs generate env"
-  lane :generate_env do
-    Dir.chdir("../") do
-      sh("envsubst < ./env.gradle.template > ./env.gradle")
-    end
-  end
-
   desc "Runs format"
   lane :format do
     gradle(task: "spotlessApply")
