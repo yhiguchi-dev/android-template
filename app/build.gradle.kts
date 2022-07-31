@@ -7,8 +7,6 @@ plugins {
   id("com.diffplug.spotless")
 }
 
-val compose_version: String by project
-
 android {
 
   compileSdk = 32
@@ -64,7 +62,7 @@ android {
     compose = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = compose_version
+    kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get()
   }
   packagingOptions {
     resources {
@@ -84,9 +82,8 @@ android {
 dependencies {
 
   implementation("androidx.core:core-ktx:1.8.0")
-  implementation("androidx.compose.ui:ui:$compose_version")
-  implementation("androidx.compose.material:material:$compose_version")
-  implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
+  implementation(libs.bundles.androidx.compose)
+  implementation(libs.androidx.activity.activityCompose)
   implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
   implementation("androidx.activity:activity-compose:1.5.1")
   implementation("androidx.navigation:navigation-compose:2.5.1")
@@ -103,8 +100,10 @@ dependencies {
   testImplementation("junit:junit:4.13.2")
   androidTestImplementation("androidx.test.ext:junit:1.1.3")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-  androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
-  debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
+//  androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+//  debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
+  androidTestImplementation(libs.androidx.compose.ui.uiTestJunit4)
+  debugImplementation(libs.androidx.compose.ui.uiTooling)
 
   testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
   testImplementation("ch.qos.logback:logback-classic:1.2.11")
